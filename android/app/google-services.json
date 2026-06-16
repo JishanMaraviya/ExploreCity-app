@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "606142445181",
+    "project_id": "tourist-place-320c2",
+    "storage_bucket": "tourist-place-320c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:606142445181:android:0db0902346657f258b2314",
+        "android_client_info": {
+          "package_name": "com.example.touristplace"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVuCHJ2Tekwtm7lwypSnQZzqQNsDe-7zg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
