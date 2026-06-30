@@ -22,6 +22,22 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/app_icon.png"
+  min_sdk_android: 21 # Required for adaptive icon support
+  remove_alpha_ios: true
+  # Adaptive Icon Configuration
+  # ic_launcher_foreground.png has the logo at 60% scale with white padding
+  # so Android's adaptive icon mask never crops any part of the logo
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/ic_launcher_foreground.png"
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/app_icon.png
+    - assets/ic_launcher_foreground.png
