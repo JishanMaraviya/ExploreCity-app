@@ -176,7 +176,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.s24),
@@ -204,8 +203,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _nameError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.border,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.outline,
                           width: _nameError != null ? 1.5 : 1,
                         ),
                       ),
@@ -213,8 +212,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _nameError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.primary,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
                           width: 1.5,
                         ),
                       ),
@@ -235,8 +234,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _emailError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.border,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.outline,
                           width: _emailError != null ? 1.5 : 1,
                         ),
                       ),
@@ -244,8 +243,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _emailError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.primary,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
                           width: 1.5,
                         ),
                       ),
@@ -266,8 +265,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _passwordError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.border,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.outline,
                           width: _passwordError != null ? 1.5 : 1,
                         ),
                       ),
@@ -275,8 +274,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _passwordError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.primary,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
                           width: 1.5,
                         ),
                       ),
@@ -297,8 +296,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _confirmPasswordError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.border,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.outline,
                           width: _confirmPasswordError != null ? 1.5 : 1,
                         ),
                       ),
@@ -306,8 +305,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: AppCorners.rounded16,
                         borderSide: BorderSide(
                           color: _confirmPasswordError != null
-                              ? const Color(0xFFEF4444)
-                              : AppColors.primary,
+                              ? Theme.of(context).colorScheme.error
+                              : Theme.of(context).colorScheme.primary,
                           width: 1.5,
                         ),
                       ),

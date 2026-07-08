@@ -120,23 +120,28 @@ class _SplashScreenState extends State<SplashScreen>
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Stack(
         children: [
           // ── Background gradient ──────────────────────────────────────────
           Container(
             width: double.infinity,
             height: double.infinity,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFFFFFFF),
-                  Color(0xFFF0F8FF),
-                  Color(0xFFE1F2FF),
-                ],
-                stops: [0.0, 0.5, 1.0],
+                colors: Theme.of(context).brightness == Brightness.light
+                    ? const [
+                        Color(0xFFFFFFFF),
+                        Color(0xFFF0F8FF),
+                        Color(0xFFE1F2FF),
+                      ]
+                    : [
+                        Theme.of(context).scaffoldBackgroundColor,
+                        Theme.of(context).scaffoldBackgroundColor,
+                        Theme.of(context).colorScheme.surface,
+                      ],
+                stops: const [0.0, 0.5, 1.0],
               ),
             ),
           ),
@@ -262,7 +267,7 @@ class _SplashScreenState extends State<SplashScreen>
                           // "Explore city" — split color text, centered
                           RichText(
                             textAlign: TextAlign.center,
-                            text: const TextSpan(
+                            text: TextSpan(
                               children: [
                                 TextSpan(
                                   text: 'Explore ',
@@ -270,11 +275,11 @@ class _SplashScreenState extends State<SplashScreen>
                                     fontFamily: 'Poppins',
                                     fontSize: 34,
                                     fontWeight: FontWeight.w800,
-                                    color: Color(0xFF1E293B),
+                                    color: Theme.of(context).colorScheme.onSurface,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
-                                TextSpan(
+                                const TextSpan(
                                   text: 'city',
                                   style: TextStyle(
                                     fontFamily: 'Poppins',

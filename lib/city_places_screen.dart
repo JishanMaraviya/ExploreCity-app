@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'theme/app_theme.dart';
+import 'place_details_screen.dart';
+import 'visiting_order_screen.dart';
 
 class CityPlacesScreen extends StatefulWidget {
   final String cityName;
@@ -16,18 +18,6 @@ class CityPlacesScreen extends StatefulWidget {
 class _CityPlacesScreenState extends State<CityPlacesScreen> {
   String _searchQuery = "";
   final TextEditingController _searchController = TextEditingController();
-
-  Future<void> _openGoogleMaps(String location) async {
-    final String encodedLocation = Uri.encodeComponent(location);
-    final Uri url = Uri.parse("https://www.google.com/maps/search/?api=1&query=$encodedLocation");
-    if (!await launchUrl(url)) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open maps')),
-        );
-      }
-    }
-  }
 
   Future<void> _togglePlaceLike(String placeId, bool isLiked) async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
@@ -48,12 +38,11 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.primaryText),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -68,7 +57,7 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
               padding: const EdgeInsets.all(AppSpacing.s24),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: AppCorners.rounded16,
                   boxShadow: AppShadows.soft,
                 ),
@@ -82,6 +71,47 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
                   ),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
+              child: TravelCard(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                margin: const EdgeInsets.only(bottom: AppSpacing.s24),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => VisitingOrderScreen(cityName: widget.cityName),
+                    ),
+                  );
+                },
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.route_rounded, color: AppColors.primary),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Recommended Visiting Order", style: AppTextStyles.subheading()),
+                          const SizedBox(height: 4),
+                          Text("See the best sequence to explore.", style: AppTextStyles.bodySmall()),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: AppColors.primary),
+                  ],
                 ),
               ),
             ),
@@ -133,7 +163,15 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
                             child: TravelCard(
                               padding: EdgeInsets.zero,
                               onTap: () {
-                                // Detail page functionality later
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PlaceDetailsScreen(
+                                      placeData: data,
+                                      placeId: placeId,
+                                    ),
+                                  ),
+                                );
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,7 +187,7 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
                                           fit: BoxFit.cover,
                                           errorBuilder: (context, error, stackTrace) => Container(
                                             height: 220,
-                                            color: AppColors.border,
+                                            color: Theme.of(context).colorScheme.outline,
                                             child: const Icon(Icons.image_not_supported_outlined),
                                           ),
                                         ),
@@ -159,13 +197,13 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
                                         right: 16,
                                         child: Container(
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.9),
+                                            color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                                             shape: BoxShape.circle,
                                           ),
                                           child: IconButton(
                                             icon: Icon(
                                               isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                                              color: isLiked ? Colors.redAccent : AppColors.secondaryText,
+                                              color: isLiked ? Colors.redAccent : Theme.of(context).colorScheme.onSurfaceVariant,
                                             ),
                                             onPressed: () => _togglePlaceLike(placeId, isLiked),
                                           ),
@@ -175,34 +213,40 @@ class _CityPlacesScreenState extends State<CityPlacesScreen> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(AppSpacing.s16),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(data['name'], style: AppTextStyles.heading3()),
-                                        const SizedBox(height: 6),
-                                        InkWell(
-                                          onTap: () => _openGoogleMaps(data['location']),
-                                          borderRadius: BorderRadius.circular(8),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.location_on_rounded, color: AppColors.primary, size: 16),
-                                                const SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    data['location'],
-                                                    style: AppTextStyles.bodySmall(color: AppColors.primary).copyWith(
-                                                      decoration: TextDecoration.underline,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
+                                        Expanded(
+                                          child: Text(data['name'], style: AppTextStyles.heading3(), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => PlaceDetailsScreen(
+                                                  placeData: data,
+                                                  placeId: placeId,
                                                 ),
-                                                const SizedBox(width: 4),
-                                                const Icon(Icons.open_in_new_rounded, color: AppColors.primary, size: 14),
-                                              ],
+                                              ),
+                                            );
+                                          },
+                                          style: TextButton.styleFrom(
+                                            foregroundColor: AppColors.primary,
+                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                            minimumSize: const Size(0, 32),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(8),
                                             ),
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text("More", style: TextStyle(fontWeight: FontWeight.w600)),
+                                              SizedBox(width: 4),
+                                              Icon(Icons.arrow_forward_rounded, size: 16),
+                                            ],
                                           ),
                                         ),
                                       ],

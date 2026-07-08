@@ -715,7 +715,7 @@ class _AdminScreenState extends State<AdminScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -752,6 +752,7 @@ class _AdminScreenState extends State<AdminScreen> {
             tabs: const [
               Tab(text: "Add New"),
               Tab(text: "Manage Places"),
+              Tab(text: "Visit Order"),
             ],
           ),
         ),
@@ -761,9 +762,163 @@ class _AdminScreenState extends State<AdminScreen> {
                 children: [
                   _buildAddTab(),
                   _buildManageTab(),
+                  const AdminVisitOrderTab(),
                 ],
               ),
       ),
+    );
+  }
+}
+
+class AdminVisitOrderTab extends StatefulWidget {
+  const AdminVisitOrderTab({super.key});
+
+  @override
+  State<AdminVisitOrderTab> createState() => _AdminVisitOrderTabState();
+}
+
+class _AdminVisitOrderTabState extends State<AdminVisitOrderTab> {
+  String? _selectedCity;
+  List<Map<String, dynamic>> _places = [];
+  bool _isLoading = false;
+
+  void _fetchPlaces(String cityName) async {
+    setState(() => _isLoading = true);
+    try {
+      var placesSnap = await FirebaseFirestore.instance.collection('places').where('cityName', isEqualTo: cityName).get();
+      var orderSnap = await FirebaseFirestore.instance.collection('visit_orders').doc(cityName).get();
+
+      List<Map<String, dynamic>> fetchedPlaces = placesSnap.docs.map((doc) => {
+        'id': doc.id,
+        ...doc.data()
+      }).toList();
+
+      if (orderSnap.exists) {
+        List<dynamic> orderedIds = orderSnap.data()?['orderedPlaces'] ?? [];
+        fetchedPlaces.sort((a, b) {
+          int indexA = orderedIds.indexOf(a['id']);
+          int indexB = orderedIds.indexOf(b['id']);
+          if (indexA == -1 && indexB == -1) return 0;
+          if (indexA == -1) return 1;
+          if (indexB == -1) return -1;
+          return indexA.compareTo(indexB);
+        });
+      }
+
+      if (mounted) {
+        setState(() {
+          _places = fetchedPlaces;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
+  }
+
+  void _saveOrder() async {
+    if (_selectedCity == null) return;
+    setState(() => _isLoading = true);
+    try {
+      List<String> orderedIds = _places.map((p) => p['id'] as String).toList();
+      await FirebaseFirestore.instance.collection('visit_orders').doc(_selectedCity).set({
+        'orderedPlaces': orderedIds,
+      });
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Order saved successfully')));
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(AppSpacing.s24),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('cities').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const CircularProgressIndicator();
+              }
+              var cities = snapshot.data!.docs;
+              return DropdownButtonFormField<String>(
+                value: _selectedCity,
+                decoration: const InputDecoration(labelText: "Select City"),
+                items: cities.map((doc) {
+                  return DropdownMenuItem<String>(
+                    value: doc['name'],
+                    child: Text(doc['name']),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  if (val != null) {
+                    setState(() => _selectedCity = val);
+                    _fetchPlaces(val);
+                  }
+                },
+              );
+            },
+          ),
+        ),
+        if (_selectedCity == null)
+          Expanded(
+            child: Center(
+              child: Text("Select a city to manage its visit order", style: AppTextStyles.body()),
+            ),
+          )
+        else if (_isLoading)
+          const Expanded(child: Center(child: CircularProgressIndicator()))
+        else if (_places.isEmpty)
+          Expanded(child: Center(child: Text("No places found for $_selectedCity", style: AppTextStyles.body())))
+        else
+          Expanded(
+            child: ReorderableListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s24),
+              itemCount: _places.length,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) newIndex -= 1;
+                  final item = _places.removeAt(oldIndex);
+                  _places.insert(newIndex, item);
+                });
+              },
+              itemBuilder: (context, index) {
+                var place = _places[index];
+                return Card(
+                  key: ValueKey(place['id']),
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(place['image']),
+                    ),
+                    title: Text(place['name'], style: AppTextStyles.subheading()),
+                    trailing: const Icon(Icons.drag_handle_rounded),
+                  ),
+                );
+              },
+            ),
+          ),
+        if (_selectedCity != null && _places.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.s24),
+            child: PremiumGradientButton(
+              onPressed: _isLoading ? null : _saveOrder,
+              text: "Save Order",
+              icon: Icons.save_rounded,
+            ),
+          ),
+      ],
     );
   }
 }

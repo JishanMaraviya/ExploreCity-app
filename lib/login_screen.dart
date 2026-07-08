@@ -162,21 +162,26 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.s24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.travel_explore_rounded, size: 80, color: AppColors.primary),
+              const Icon(Icons.travel_explore_rounded, size: 80, color: Colors.blue),
               const SizedBox(height: AppSpacing.s24),
               Text("Welcome Back", style: AppTextStyles.heading1()),
               const SizedBox(height: AppSpacing.s8),
               Text("Explore beautiful destinations", style: AppTextStyles.bodySmall()),
               const SizedBox(height: AppSpacing.s40),
 
-              TravelCard(
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: AppCorners.rounded24,
+                  boxShadow: Theme.of(context).brightness == Brightness.light ? AppShadows.soft : null,
+                  border: Border.all(color: Theme.of(context).colorScheme.outline, width: 1),
+                ),
                 padding: const EdgeInsets.all(AppSpacing.s24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -192,8 +197,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: AppCorners.rounded16,
                           borderSide: BorderSide(
                             color: _emailError != null
-                                ? const Color(0xFFEF4444)
-                                : AppColors.border,
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).colorScheme.outline,
                             width: _emailError != null ? 1.5 : 1,
                           ),
                         ),
@@ -201,8 +206,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: AppCorners.rounded16,
                           borderSide: BorderSide(
                             color: _emailError != null
-                                ? const Color(0xFFEF4444)
-                                : AppColors.primary,
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).colorScheme.primary,
                             width: 1.5,
                           ),
                         ),
@@ -223,8 +228,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: AppCorners.rounded16,
                           borderSide: BorderSide(
                             color: _passwordError != null
-                                ? const Color(0xFFEF4444)
-                                : AppColors.border,
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).colorScheme.outline,
                             width: _passwordError != null ? 1.5 : 1,
                           ),
                         ),
@@ -232,8 +237,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: AppCorners.rounded16,
                           borderSide: BorderSide(
                             color: _passwordError != null
-                                ? const Color(0xFFEF4444)
-                                : AppColors.primary,
+                                ? Theme.of(context).colorScheme.error
+                                : Theme.of(context).colorScheme.primary,
                             width: 1.5,
                           ),
                         ),

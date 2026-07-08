@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import 'theme/app_theme.dart';
+import 'theme/theme_provider.dart';
 import 'city_places_screen.dart';
+import 'place_details_screen.dart';
+import 'edit_profile_screen.dart';
 
 class UserHomeScreen extends StatefulWidget {
   const UserHomeScreen({super.key});
@@ -17,7 +21,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SafeArea(
         child: IndexedStack(
           index: _currentIndex,
@@ -36,7 +39,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           });
         },
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.secondaryText,
+        unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_rounded),
@@ -99,7 +102,7 @@ class _HomeTabState extends State<HomeTab> {
                 const SizedBox(height: AppSpacing.s32),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: AppCorners.rounded16,
                     boxShadow: AppShadows.soft,
                   ),
@@ -217,7 +220,7 @@ class LikesTab extends StatelessWidget {
               ),
               TabBar(
                 labelColor: AppColors.primary,
-                unselectedLabelColor: AppColors.secondaryText,
+                unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
                 indicatorColor: AppColors.primary,
                 tabs: const [
                   Tab(text: "Cities"),
@@ -277,6 +280,17 @@ class LikesTab extends StatelessWidget {
                                     padding: const EdgeInsets.only(bottom: AppSpacing.s24),
                                     child: TravelCard(
                                       padding: EdgeInsets.zero,
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => PlaceDetailsScreen(
+                                              placeData: data,
+                                              placeId: doc.id,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
@@ -291,7 +305,7 @@ class LikesTab extends StatelessWidget {
                                                   fit: BoxFit.cover,
                                                   errorBuilder: (context, error, stackTrace) => Container(
                                                     height: 220,
-                                                    color: AppColors.border,
+                                                    color: Theme.of(context).colorScheme.outline,
                                                     child: const Icon(Icons.image_not_supported_outlined),
                                                   ),
                                                 ),
@@ -301,7 +315,7 @@ class LikesTab extends StatelessWidget {
                                                 right: 16,
                                                 child: Container(
                                                   decoration: BoxDecoration(
-                                                    color: Colors.white.withOpacity(0.9),
+                                                    color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
                                                     shape: BoxShape.circle,
                                                   ),
                                                   child: IconButton(
@@ -318,24 +332,41 @@ class LikesTab extends StatelessWidget {
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(AppSpacing.s16),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                Text(data['name'], style: AppTextStyles.heading3()),
-                                                const SizedBox(height: 6),
-                                                Row(
-                                                  children: [
-                                                    const Icon(Icons.location_on_rounded, color: AppColors.secondaryText, size: 14),
-                                                    const SizedBox(width: 4),
-                                                    Expanded(
-                                                      child: Text(
-                                                        data['location'],
-                                                        style: AppTextStyles.bodySmall(color: AppColors.secondaryText),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
+                                                Expanded(
+                                                  child: Text(data['name'], style: AppTextStyles.heading3(), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => PlaceDetailsScreen(
+                                                          placeData: data,
+                                                          placeId: doc.id,
+                                                        ),
                                                       ),
+                                                    );
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                    foregroundColor: AppColors.primary,
+                                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                                    minimumSize: const Size(0, 32),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8),
                                                     ),
-                                                  ],
+                                                  ),
+                                                  child: const Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text("More", style: TextStyle(fontWeight: FontWeight.w600)),
+                                                      SizedBox(width: 4),
+                                                      Icon(Icons.arrow_forward_rounded, size: 16),
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -397,10 +428,55 @@ class ProfileTab extends StatelessWidget {
                 child: Icon(Icons.person_rounded, size: 60, color: Colors.white),
               ),
               const SizedBox(height: 16),
-              Text(name, style: AppTextStyles.heading2()),
+              Text(name, style: Theme.of(context).textTheme.headlineSmall),
               const SizedBox(height: 4),
-              Text(email, style: AppTextStyles.body(color: AppColors.secondaryText)),
-              const SizedBox(height: 40),
+              Text(email, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              const SizedBox(height: 32),
+              
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Settings", style: Theme.of(context).textTheme.titleLarge),
+              ),
+              const SizedBox(height: 16),
+              
+              TravelCard(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                child: Column(
+                  children: [
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.edit_outlined, color: AppColors.primary),
+                      title: Text("Edit Profile", style: Theme.of(context).textTheme.titleMedium),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileScreen(currentName: name),
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(height: 1),
+                    Consumer<ThemeProvider>(
+                      builder: (context, themeProvider, _) {
+                        return SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          secondary: const Icon(Icons.dark_mode_outlined, color: AppColors.primary),
+                          title: Text("Dark Mode", style: Theme.of(context).textTheme.titleMedium),
+                          value: themeProvider.isDarkMode,
+                          activeColor: AppColors.primary,
+                          onChanged: (value) {
+                            themeProvider.toggleTheme(value);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              
               TravelCard(
                 padding: const EdgeInsets.all(AppSpacing.s16),
                 onTap: _logout,
