@@ -81,48 +81,21 @@ lib/
 
 ## 🖼️ App Screenshots
 
-### Authentication & Home
-
 <table>
-  <tr>
-    <td align="center"><b>App Splash</b></td>
-    <td align="center"><b>Login Screen</b></td>
-    <td align="center"><b>Registration</b></td>
-  </tr>
   <tr>
     <td><img src="assets/screenshots/1.png" width="260"/></td>
     <td><img src="assets/screenshots/2.png" width="260"/></td>
     <td><img src="assets/screenshots/3.png" width="260"/></td>
   </tr>
   <tr>
-    <td align="center"><b>Home / Dashboard</b></td>
-    <td align="center"><b>City Places</b></td>
-    <td align="center"><b>Place Details</b></td>
-  </tr>
-  <tr>
     <td><img src="assets/screenshots/4.png" width="260"/></td>
     <td><img src="assets/screenshots/5.png" width="260"/></td>
     <td><img src="assets/screenshots/6.png" width="260"/></td>
-  </tr>
-</table>
-
-### Features & Admin
-
-<table>
-  <tr>
-    <td align="center"><b>Visiting Order</b></td>
-    <td align="center"><b>User Profile</b></td>
-    <td align="center"><b>Edit Profile</b></td>
   </tr>
   <tr>
     <td><img src="assets/screenshots/7.png" width="260"/></td>
     <td><img src="assets/screenshots/8.png" width="260"/></td>
     <td><img src="assets/screenshots/9.png" width="260"/></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Admin Dashboard</b></td>
-    <td align="center"><b>Settings / Theme</b></td>
-    <td></td>
   </tr>
   <tr>
     <td><img src="assets/screenshots/10.png" width="260"/></td>
