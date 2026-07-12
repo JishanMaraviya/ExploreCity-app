@@ -10,11 +10,11 @@
 
 ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![Provider](https://img.shields.io/badge/Provider-8A2BE2?style=for-the-badge&logo=flutter&logoColor=white)
+![Riverpod](https://img.shields.io/badge/Riverpod-0553B1?style=for-the-badge&logo=flutter&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 
 ![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS-blue?style=flat-square)
-![Architecture](https://img.shields.io/badge/Architecture-Provider-orange?style=flat-square)
+![Architecture](https://img.shields.io/badge/Architecture-Riverpod-0553B1?style=flat-square)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
 
 </div>
@@ -33,7 +33,7 @@
 - **🌍 Explore Places** — Discover a wide range of tourist destinations, explore places city-wise, and read detailed descriptions for each location.
 - **🗺️ Visiting Order** — Get optimized visiting sequences to plan your travel routes efficiently.
 - **🛠️ Admin Dashboard** — A dedicated administrative panel for adding, updating, and managing tourist spots and destinations seamlessly.
-- **🌓 Dynamic Theming** — Built-in Light and Dark mode support (`ThemeProvider`) for an enhanced and comfortable viewing experience.
+- **🌓 Dynamic Theming** — Built-in Light and Dark mode support (`ThemeNotifier` via **Riverpod**) for an enhanced and comfortable viewing experience.
 - **☁️ Cloud Sync** — Integrated with Firebase Firestore for real-time data updates, ensuring your app stays synced across devices.
 - **👤 Profile Management** — Dedicated profile screens allowing users to manage and edit their personal information.
 
@@ -44,7 +44,7 @@
 | Layer                         | Technology                                             |
 |--------------------------------|---------------------------------------------------------|
 | Framework                     | Flutter & Dart                                         |
-| State Management              | **Provider** (Theme & App State)                       |
+| State Management              | **Riverpod** (`flutter_riverpod`) — `StateNotifierProvider` for theme state |
 | API Integration & Networking  | `http` package for REST API calls                      |
 | Backend as a Service (BaaS)   | Firebase (Firestore for Database, Authentication)      |
 | Local Storage                 | `shared_preferences`                                   |
@@ -59,7 +59,7 @@ lib/
 │
 ├── theme/                        # Dynamic theme settings (Dark/Light mode)
 │   ├── app_theme.dart
-│   └── theme_provider.dart
+│   └── theme_provider.dart       # ThemeNotifier (StateNotifier) + themeNotifierProvider
 │
 ├── admin_screen.dart             # Admin dashboard for managing places
 ├── user_home_screen.dart         # Main hub for users to discover places
