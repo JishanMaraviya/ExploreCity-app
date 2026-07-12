@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.light;
-
-  ThemeMode get themeMode => _themeMode;
-  bool get isDarkMode => _themeMode == ThemeMode.dark;
-
-  ThemeProvider() {
+/// Riverpod StateNotifier that replaces the former ChangeNotifier-based ThemeProvider.
+/// Business logic (SharedPreferences load/save) is kept identical.
+class ThemeNotifier extends StateNotifier<ThemeMode> {
+  ThemeNotifier() : super(ThemeMode.light) {
     _loadTheme();
   }
 
+  bool get isDarkMode => state == ThemeMode.dark;
+
   void toggleTheme(bool isDark) {
-    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    state = isDark ? ThemeMode.dark : ThemeMode.light;
     _saveTheme(isDark);
-    notifyListeners();
   }
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
     final isDark = prefs.getBool('isDarkMode') ?? false;
-    _themeMode = isDark ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
+    state = isDark ? ThemeMode.dark : ThemeMode.light;
   }
 
   Future<void> _saveTheme(bool isDark) async {
@@ -29,3 +27,7 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setBool('isDarkMode', isDark);
   }
 }
+
+/// Top-level provider — replaces `ChangeNotifierProvider(create: (_) => ThemeProvider())`.
+final themeNotifierProvider =
+    StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) => ThemeNotifier());

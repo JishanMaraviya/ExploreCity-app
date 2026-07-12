@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_provider.dart';
 import 'city_places_screen.dart';
@@ -391,7 +391,7 @@ class LikesTab extends StatelessWidget {
 }
 
 // ---- PROFILE TAB ----
-class ProfileTab extends StatelessWidget {
+class ProfileTab extends ConsumerWidget {
   const ProfileTab({super.key});
 
   void _logout() async {
@@ -399,7 +399,7 @@ class ProfileTab extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     String uid = FirebaseAuth.instance.currentUser!.uid;
 
     return StreamBuilder<DocumentSnapshot>(
@@ -458,18 +458,14 @@ class ProfileTab extends StatelessWidget {
                       },
                     ),
                     const Divider(height: 1),
-                    Consumer<ThemeProvider>(
-                      builder: (context, themeProvider, _) {
-                        return SwitchListTile(
-                          contentPadding: EdgeInsets.zero,
-                          secondary: const Icon(Icons.dark_mode_outlined, color: AppColors.primary),
-                          title: Text("Dark Mode", style: Theme.of(context).textTheme.titleMedium),
-                          value: themeProvider.isDarkMode,
-                          activeColor: AppColors.primary,
-                          onChanged: (value) {
-                            themeProvider.toggleTheme(value);
-                          },
-                        );
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      secondary: const Icon(Icons.dark_mode_outlined, color: AppColors.primary),
+                      title: Text("Dark Mode", style: Theme.of(context).textTheme.titleMedium),
+                      value: ref.watch(themeNotifierProvider) == ThemeMode.dark,
+                      activeColor: AppColors.primary,
+                      onChanged: (value) {
+                        ref.read(themeNotifierProvider.notifier).toggleTheme(value);
                       },
                     ),
                   ],
